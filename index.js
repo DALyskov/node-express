@@ -15,6 +15,10 @@ const app = express();
 const hbs = exphbs.create({
   defaultLayout: 'main',
   extname: 'hbs',
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
 });
 
 app.engine('hbs', hbs.engine);
@@ -33,7 +37,7 @@ app.use('/card', cardRouter);
 async function start() {
   try {
     const password = 'PUBM9NWrpj6jQgMx';
-    const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/shop?w=majority`;
     await mongoose.connect(url, {useNewUrlParser: true});
 
     app.listen(PORT, () => {
