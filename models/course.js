@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose');
 
-const course = new Schema({
+const courseSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -10,9 +10,13 @@ const course = new Schema({
     required: true,
   },
   img: String,
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
-module.exports = model('Course', course);
+module.exports = model('Course', courseSchema);
 
 // const {v4: uuid} = require('uuid');
 // const fs = require('fs');

@@ -11,7 +11,8 @@ router.get('/', (req, res) => {
 
 router.post('/', async (req, res) => {
   const {title, price, img} = req.body;
-  const course = new Course({title, price, img});
+  // т.к. userId является типом Schema.Types.ObjectId, то мы можем просто написать userId: req.user вместо userId: req.user._id
+  const course = new Course({title, price, img, userId: req.user});
 
   try {
     await course.save();

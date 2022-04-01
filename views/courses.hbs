@@ -6,7 +6,7 @@
       <div class="card">
         <div class="card-image">
           <img src="{{img}}" alt="{{title}}">
-          <span class="card-title">{{title}}</span>
+          <span class="cart-title">{{title}}</span>
         </div>
         <div class="card-content">
           <p class="price">{{price}}</p>
@@ -14,7 +14,7 @@
         <div class="card-action actions">
           <a href="/courses/{{id}}" target="_blank">Open the course</a>
           <a href="/courses/{{id}}/edit?allow=true">Edit</a>
-          <form action="/card/add" method="POST">
+          <form action="/cart/add" method="POST">
             <input type="hidden" name="id" value="{{id}}">
             <button class="btn btn-primary" type="submite">Buy</button>
           </form>
