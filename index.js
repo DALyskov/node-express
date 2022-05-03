@@ -7,6 +7,7 @@ const homeRouter = require('./routs/home');
 const coursesRouter = require('./routs/courses');
 const addRouter = require('./routs/add');
 const cardRouter = require('./routs/cart');
+const ordersRouts = require('./routs/orders');
 const User = require('./models/user');
 
 const PORT = process.env.PORT || 3000;
@@ -43,6 +44,7 @@ app.use('/', homeRouter);
 app.use('/courses', coursesRouter);
 app.use('/add', addRouter);
 app.use('/cart', cardRouter);
+app.use('/orders', ordersRouts);
 
 
 async function start() {

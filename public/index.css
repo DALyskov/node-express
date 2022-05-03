@@ -26,7 +26,8 @@
 }
 
 .card {
-  box-shadow:none;
+  /* box-shadow:none; */
+  padding: 10px;
 }
 
 .card-action.actions {
