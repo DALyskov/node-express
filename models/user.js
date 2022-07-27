@@ -5,10 +5,11 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  name: {
+  password: {
     type: String,
     required: true,
   },
+  name: String,
   cart: {
     items: [
       {
@@ -44,13 +45,10 @@ userSchema.methods.addCourse = function(course) {
 userSchema.methods.removeFromCart = function(courseId) {
   let items = [...this.cart.items];
   const idx = items.findIndex(c => `${c.courseId}` === `${courseId}`);
-  console.log(typeof idx);
   if (items[idx].count === 1) {
     items = items.filter(c => `${c.courseId}` !== `${courseId}`);
-    console.log('items', items);
   } else {
     items[idx].count--;
-    console.log('items[idx]', items[idx]);
   }
 
   this.cart.items = items;

@@ -30,6 +30,10 @@
   padding: 10px;
 }
 
+.card--course {
+  padding: 0;
+}
+
 .card-action.actions {
   display: flex;
   align-items: center;
@@ -38,4 +42,8 @@
 
 .course-form {
   margin-bottom: 2rem;
+}
+
+.auth {
+  padding-top: 1rem;
 }

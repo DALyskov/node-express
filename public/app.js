@@ -51,3 +51,5 @@ if (cardContainer) {
     }
   });
 }
+
+M.Tabs.init(document.querySelectorAll('.tabs'));
