@@ -10,6 +10,7 @@ router.get('/login', (req, res) => {
   res.render('auth/login', {
     title: 'Auth',
     isLoginPage: true,
+    error: req.flash('error'),
   });
 });
 
@@ -23,10 +24,18 @@ router.post('/login', async (req, res) => {
   try {
     const {email, password} = req.body;
     const condidate = await User.findOne({email});
-    if (!condidate) return res.redirect('login#login');
+    if (!condidate) {
+      req.flash('error', 'email is not found');
+      res.redirect('login#login');
+      return;
+    }
 
     const areSame = await bcrypt.compare(password, condidate.password);
-    if (!areSame) return res.redirect('login#login');
+    if (!areSame) {
+      req.flash('error', 'invalid password');
+      res.redirect('login#login');
+      return;
+    }
 
     req.session.user = condidate;
     req.session.isAuthenticated = true;
@@ -44,6 +53,7 @@ router.post('/register', async (req, res) => {
     const {email, password, name, repeat} = req.body;
     const condidate = await User.findOne({email});
     if (condidate) {
+      req.flash('error', 'email is not unique');
       res.redirect('login#register');
     } else {
       const hashPassword = await bcrypt.hash(password, 12);
