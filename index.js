@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const varMiddleware = require('./middleware/variables');
 const userMiddleware = require('./middleware/user');
 
+const keys = require('./keys');
 const homeRouter = require('./routs/home');
 const coursesRouter = require('./routs/courses');
 const addRouter = require('./routs/add');
@@ -19,7 +20,6 @@ const authRouts = require('./routs/auth');
 // const User = require('./models/user');
 
 const PORT = process.env.PORT || 3000;
-const MONGODB_URL = `mongodb://localhost:27017/shop`;
 
 
 const app = express();
@@ -31,11 +31,12 @@ const hbs = exphbs.create({
     allowProtoPropertiesByDefault: true,
     allowProtoMethodsByDefault: true,
   },
+  helpers: require('./utils/hbs-helpers'),
 });
 
 const store = new MongoStore({
   collection: 'sessions',
-  uri: MONGODB_URL,
+  uri: keys.MONGODB_URL,
 });
 
 app.engine('hbs', hbs.engine);
@@ -56,7 +57,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({extended: true}));
 
 app.use(session({
-  secret: 'some secret string',
+  secret: keys.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store,
@@ -79,7 +80,7 @@ async function start() {
     // const password = 'PUBM9NWrpj6jQgMx';
     // const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/shop?w=majority`;
     // await mongoose.connect(url, {useNewUrlParser: true});
-    await mongoose.connect(MONGODB_URL, {useNewUrlParser: true});
+    await mongoose.connect(keys.MONGODB_URL, {useNewUrlParser: true});
 
     // const candidate = await User.findOne();
     // if (!candidate) {
