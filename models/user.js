@@ -10,6 +10,7 @@ const userSchema = new Schema({
     required: true,
   },
   name: String,
+  avatarUrl: String,
   resetInfo: {
     token: String,
     tokenExp: Date,

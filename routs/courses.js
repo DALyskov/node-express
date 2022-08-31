@@ -1,6 +1,9 @@
 const {Router} = require('express');
+const check = require('express-validator');
+
 const Course = require('../models/course');
 const authMiddleware = require('../middleware/auth');
+const {courseValidators} = require('../utils/validators');
 
 const router = new Router();
 const checkIsOwner = (course, req) => course.userId.toString() === req.user._id.toString();
@@ -40,13 +43,22 @@ router.get('/:id/edit', authMiddleware, async (req, res) => {
     res.render('course-edit', {
       title: `Edit ${course.title}`,
       course,
+      error: req.flash('error'),
     });
   } catch (e) {
-    console.log(3);
+    console.log(e);
   }
 });
 
-router.post('/edit', authMiddleware, async (req, res) => {
+router.post('/edit', authMiddleware, courseValidators, async (req, res) => {
+  const error = check.validationResult(req);
+  const {id} = req.body;
+  if (!error.isEmpty()) {
+    req.flash('error', `${error.array()[0].param} - ${error.array()[0].msg}`);
+    res.status(422).redirect(`${id}/edit?allow=true`);
+    return;
+  }
+
   try {
     const {id} = req.body;
     delete req.body.id;

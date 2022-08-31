@@ -9,6 +9,8 @@ const flash = require('connect-flash');
 
 const varMiddleware = require('./middleware/variables');
 const userMiddleware = require('./middleware/user');
+const errorMiddleware = require('./middleware/error');
+const loadingFileMiddleware = require('./middleware/loadingFile');
 
 const keys = require('./keys');
 const homeRouter = require('./routs/home');
@@ -17,6 +19,7 @@ const addRouter = require('./routs/add');
 const cardRouter = require('./routs/cart');
 const ordersRouts = require('./routs/orders');
 const authRouts = require('./routs/auth');
+const profileRouts = require('./routs/profile');
 // const User = require('./models/user');
 
 const PORT = process.env.PORT || 3000;
@@ -54,6 +57,7 @@ app.set('views', 'views');
 // });
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(express.urlencoded({extended: true}));
 
 app.use(session({
@@ -62,6 +66,7 @@ app.use(session({
   saveUninitialized: false,
   store,
 }));
+app.use(loadingFileMiddleware.single('avatar'));
 app.use(csrf());
 app.use(flash());
 app.use(varMiddleware);
@@ -73,6 +78,9 @@ app.use('/add', addRouter);
 app.use('/cart', cardRouter);
 app.use('/orders', ordersRouts);
 app.use('/auth', authRouts);
+app.use('/profile', profileRouts);
+
+app.use(errorMiddleware);
 
 
 async function start() {

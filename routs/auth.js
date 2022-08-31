@@ -1,9 +1,12 @@
 const {Router} = require('express');
+const check = require('express-validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+
 const User = require('../models/user');
 const sendRegistration = require('../email/sendRegistration');
 const sendResetToken = require('../email/sendResetToken');
+const {registerValidators, loginValidators} = require('../utils/validators');
 
 const router = new Router();
 
@@ -52,8 +55,15 @@ router.get('/password/:token', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginValidators, async (req, res) => {
   try {
+    const error = check.validationResult(req);
+    if (!error.isEmpty()) {
+      req.flash('error', `${error.array()[0].param} - ${error.array()[0].msg}`);
+      res.status(422).redirect('login#login');
+      return;
+    }
+
     const {email, password} = req.body;
     const condidate = await User.findOne({email});
     if (!condidate) {
@@ -80,25 +90,27 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/register', async (req, res) => {
+router.post('/register', registerValidators, async (req, res) => {
   try {
-    const {email, password, name/* , repeat */} = req.body;
-    const condidate = await User.findOne({email});
-    if (condidate) {
-      req.flash('error', 'email is not unique');
-      res.redirect('login#register');
-    } else {
-      const hashPassword = await bcrypt.hash(password, 12);
-      const user = new User({
-        email,
-        name,
-        password: hashPassword,
-        cart: {items: []},
-      });
-      await user.save();
-      res.redirect('login#login');
-      await sendRegistration([email]);
+    const error = check.validationResult(req);
+    if (!error.isEmpty()) {
+      req.flash('error', `${error.array()[0].param} - ${error.array()[0].msg}`);
+      res.status(422).redirect('login#register');
+      return;
     }
+
+    const {email, password, name} = req.body;
+    const hashPassword = await bcrypt.hash(password, 12);
+    const user = new User({
+      email,
+      name,
+      password: hashPassword,
+      cart: {items: []},
+    });
+
+    await user.save();
+    res.redirect('login#login');
+    await sendRegistration([email]);
   } catch (e) {
     console.log(e);
   }
@@ -155,5 +167,31 @@ router.post('/password', async (req, res) => {
     console.log(e);
   }
 });
+
+// // dima delete it
+// router.post('/postman', jsonParser, async (req, res) => {
+//   console.log('headers', req.headers);
+//   console.log('body', req.body);
+//   try {
+//     const candidate = await User.findOne({
+//       '_id': req.body.userId,
+//       'resetInfo.token': req.body.token,
+//       'resetInfo.tokenExp': {$gt: Date.now()},
+//     });
+
+//     if (!candidate) {
+//       req.flash('error', 'Token has expired');
+//       res.redirect('login');
+//       return;
+//     }
+
+//     candidate.password = await bcrypt.hash(req.body.password, 10);
+//     candidate.resetInfo = undefined;
+//     await candidate.save();
+//     res.redirect('login');
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
 module.exports = router;
