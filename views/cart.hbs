@@ -1,6 +1,6 @@
-<div class="card">
-  <h1>Card</h1>
-  <div id="card">
+<div class="cart">
+  <h1>Cart</h1>
+  <div id="cart">
   {{#if courses.length}}
     <table>
       <thead>
@@ -18,7 +18,7 @@
           <td>{{count}}</td>
           <td>{{amount}}</td>
           <td>
-            <button class="btn btn-small js-remove-course" data-id={{id}}>Delete</button>
+            <button class="btn btn-small js-remove-course" data-id={{id}} data-csrf={{@root.csrf}}>Delete</button>
           </td>
         </tr>
         {{/each}}
@@ -26,8 +26,14 @@
     </table>
 
     <p><strong>Price:</strong> <span class="price">{{price}}</span></p>
+
+    <form action="/orders" method="POST">
+
+    <input type="hidden" name="_csrf" value="{{csrf}}">
+    <button type="submit" class="btn">Make an order</button>
+    </form>
   {{else}}
-    <p>Card is empty</p>
+    <p>Cart is empty</p>
   {{/if}}
   </div>
 </div>
