@@ -23,7 +23,8 @@ const profileRouts = require('./routs/profile');
 // const User = require('./models/user');
 
 const PORT = process.env.PORT || 3000;
-
+const password = 'PUBM9NWrpj6jQgMx';
+const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/shop?w=majority`;
 
 const app = express();
 
@@ -39,7 +40,8 @@ const hbs = exphbs.create({
 
 const store = new MongoStore({
   collection: 'sessions',
-  uri: keys.MONGODB_URL,
+  // uri: keys.MONGODB_URL,
+  uri: url,
 });
 
 app.engine('hbs', hbs.engine);
@@ -85,10 +87,8 @@ app.use(errorMiddleware);
 
 async function start() {
   try {
-    // const password = 'PUBM9NWrpj6jQgMx';
-    // const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/shop?w=majority`;
-    // await mongoose.connect(url, {useNewUrlParser: true});
-    await mongoose.connect(keys.MONGODB_URL, {useNewUrlParser: true});
+    await mongoose.connect(url, {useNewUrlParser: true});
+    // await mongoose.connect(keys.MONGODB_URL, {useNewUrlParser: true});
 
     // const candidate = await User.findOne();
     // if (!candidate) {
