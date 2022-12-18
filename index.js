@@ -20,11 +20,11 @@ const cardRouter = require('./routs/cart');
 const ordersRouts = require('./routs/orders');
 const authRouts = require('./routs/auth');
 const profileRouts = require('./routs/profile');
-// const User = require('./models/user');
+const User = require('./models/user');
 
 const PORT = process.env.PORT || 3000;
-const password = 'PUBM9NWrpj6jQgMx';
-const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/shop?w=majority`;
+// const password = 'PUBM9NWrpj6jQgMx';
+// const url = `mongodb+srv://DALyskov:${password}@cluster0.xu09b.mongodb.net/shop?w=majority`;
 
 const app = express();
 
@@ -40,23 +40,23 @@ const hbs = exphbs.create({
 
 const store = new MongoStore({
   collection: 'sessions',
-  // uri: keys.MONGODB_URL,
-  uri: url,
+  uri: keys.MONGODB_URL,
+  // uri: url,
 });
 
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', 'views');
 
-// app.use(async (req, res, next) => {
-//   try {
-//     const user = await User.findById('62d1105933708a8dc72546fb');
-//     req.user = user;
-//     next();
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
+app.use(async (req, res, next) => {
+  try {
+    const user = await User.findById('62d1105933708a8dc72546fb');
+    req.user = user;
+    next();
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -87,18 +87,18 @@ app.use(errorMiddleware);
 
 async function start() {
   try {
-    await mongoose.connect(url, {useNewUrlParser: true});
-    // await mongoose.connect(keys.MONGODB_URL, {useNewUrlParser: true});
+    // await mongoose.connect(url, {useNewUrlParser: true});
+    await mongoose.connect(keys.MONGODB_URL, {useNewUrlParser: true});
 
-    // const candidate = await User.findOne();
-    // if (!candidate) {
-    //   const user = new User({
-    //     email: 'dalyskov@gmail.com',
-    //     name: 'Dmitry',
-    //     cart: {items: []},
-    //   });
-    //   await user.save();
-    // }
+    const candidate = await User.findOne();
+    if (!candidate) {
+      const user = new User({
+        email: 'dalyskov@gmail.com',
+        name: 'Dmitry',
+        cart: {items: []},
+      });
+      await user.save();
+    }
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
